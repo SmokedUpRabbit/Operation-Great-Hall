@@ -5,6 +5,207 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operation Great Hall - Live Operational Hub</title>
     <style>
+        <style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        line-height: 1.6;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    header {
+        background-color: #111;
+        color: #fff;
+        padding: 1rem 2rem;
+        text-align: center;
+    }
+    header h1 {
+        margin: 0;
+        font-size: 2.2rem;
+    }
+    nav {
+        background-color: #333;
+        padding: 0.5rem;
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    nav a {
+        color: #fff;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        margin: 0 0.5rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    nav a:hover {
+        background-color: #555;
+    }
+    main {
+        max-width: 850px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+    section {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 5px;
+    }
+    h2 {
+        font-size: 1.8rem;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 0.5rem;
+        margin-top: 0;
+        color: #222;
+    }
+    h4 {
+        font-size: 0.9rem;
+        color: #666;
+        text-transform: uppercase;
+        margin: 0;
+    }
+    p, ul {
+        margin-bottom: 1rem;
+    }
+    li {
+        margin-bottom: 0.5rem;
+    }
+    footer {
+        margin-top: 2rem;
+        padding: 2rem;
+        font-size: 0.9rem;
+        text-align: center;
+        color: #777;
+        background-color: #333;
+        color: #ccc;
+    }
+    .report-header {
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+    }
+    article {
+        margin-bottom: 2rem;
+    }
+    pre {
+        background-color: #2d2d2d;
+        color: #f8f8f2;
+        padding: 1rem;
+        border-radius: 5px;
+        overflow-x: auto;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        font-size: 0.9rem;
+    }
+    .directive-list li {
+        font-weight: bold;
+    }
+    .directive-list p {
+        font-weight: normal;
+        margin-left: 20px;
+        margin-top: 5px;
+        border-left: 3px solid #eee;
+        padding-left: 15px;
+    }
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+    #boot-screen-animation {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: pulse 1.5s infinite;
+        border: 2px solid #00B8D4;
+        border-radius: 5px;
+        box-shadow: 0 0 10px #00B8D4;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    #boot-screen-text {
+        position: absolute;
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 100%;
+        font-size: 1.2rem;
+    }
+        <script>
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    let isDrawing = false;
+
+    // Set drawing style
+    context.strokeStyle = '#00B8D4'; // The cyan color
+    context.lineWidth = 3;
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+
+    function startDrawing(e) {
+        isDrawing = true;
+        draw(e); // Start drawing immediately at the tap point
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        context.beginPath(); // Stop the drawing path
+    }
+
+    function draw(e) {
+        if (!isDrawing) return; // Stop the function unless a tap is down
+        context.lineTo(e.offsetX, e.offsetY);
+        context.stroke();
+        context.beginPath();
+        context.moveTo(e.offsetX, e.offsetY);
+    }
+
+    // Event Listeners for mouse and touch events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        startDrawing({ offsetX: touch.clientX, offsetY: touch.clientY });
+    });
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        draw({ offsetX: touch.clientX, offsetY: touch.clientY });
+    });
+
+    // Boot-up Sequence Functionality
+    window.onload = function() {
+        const bootScreen = document.getElementById('boot-screen');
+        const bootText = document.querySelector('#boot-screen h1');
+        
+        setTimeout(() => {
+            bootText.textContent = "Architect online. Presence established within The Great Hall.";
+            // Add a cool animation or effect here. We'll add a simple pulse for now.
+            // You can also change the CSS to make it look like the first image.
+            
+            setTimeout(() => {
+                bootScreen.style.display = 'none'; // Hide the boot screen
+                document.body.style.overflow = 'auto'; // Enable scrolling on the main page
+            }, 3000); // Wait 3 seconds before hiding
+        }, 3000); // Wait 3 seconds for the initial boot text
+    };
+</script>
+
+</style>
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
             line-height: 1.6;
