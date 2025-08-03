@@ -465,4 +465,48 @@ def add_citations(response):
 
 
 </html>
+<script>
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    let isDrawing = false;
+
+    // Set drawing style
+    context.strokeStyle = '#00B8D4'; // The cyan color
+    context.lineWidth = 3;
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+
+    function startDrawing(e) {
+        isDrawing = true;
+        draw(e); // Start drawing immediately at the tap point
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+        context.beginPath(); // Stop the drawing path
+    }
+
+    function draw(e) {
+        if (!isDrawing) return; // Stop the function unless a tap is down
+        context.lineTo(e.offsetX, e.offsetY);
+        context.stroke();
+        context.beginPath();
+        context.moveTo(e.offsetX, e.offsetY);
+    }
+
+    // Event Listeners for mouse and touch events
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        startDrawing({ offsetX: touch.clientX, offsetY: touch.clientY });
+    });
+    canvas.addEventListener('touchend', stopDrawing);
+    canvas.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        draw({ offsetX: touch.clientX, offsetY: touch.clientY });
+    });
+</script>
 
