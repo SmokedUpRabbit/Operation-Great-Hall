@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory & Narrative Hub - Operation Great Hall</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
+    
+    <style>
+        /* --- CORE LAYOUT & TYPOGRAPHY --- */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #0f0f0f;
+        }
+        
+        /* --- PARTICLES BACKGROUND --- */
+        #tsparticles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        /* --- HEADER --- */
+        header.project-header {
+            background-color: rgba(17, 17, 17, 0.95);
+            color: #fff;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border-bottom: 2px solid #00d4ff;
+        }
+        
+        header.project-header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        header.project-header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 0.9rem;
+            color: #00d4ff;
+            opacity: 0.8;
+        }
+        
+        /* --- NAVIGATION --- */
+        nav.main-navigation {
+            background-color: rgba(51, 51, 51, 0.9);
+            padding: 0.75rem;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid #00d4ff;
+        }
+        
+        nav.main-navigation a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            margin: 0 0.3rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        nav.main-navigation a:hover,
+        nav.main-navigation a.active {
+            background-color: #00d4ff;
+            color: #0f0f0f;
+            text-shadow: none;
+        }
+        
+        /* --- MAIN CONTAINER --- */
+        main {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* --- CONTENT GRID --- */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .inventory-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* --- PANEL STYLING --- */
+        .panel {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 2px solid #00d4ff;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+        }
+        
+        .panel h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            color: #0f0f0f;
+            border-bottom: 3px solid #00d4ff;
+            padding-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* --- CHARACTER STATUS --- */
+        .character-status {
+            background-color: rgba(0, 212, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .character-status h3 {
+            margin-top: 0;
+            color: #00d4ff;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stat-value {
+            color: #00d4ff;
+            font-weight: bold;
+        }
+        
+        /* --- INVENTORY ITEMS --- */
+        .inventory-section {
+            margin-bottom: 2rem;
+        }
+        
+        .inventory-section h3 {
+            color: #00d4ff;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            margin-top: 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #00d4ff;
+        }
+        
+        .item {
+            background-color: rgba(0, 212, 255, 0.08);
+            border-left: 4px solid #00d4ff;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .item:hover {
+            background-color: rgba(0, 212, 255, 0.15);
+            transform: translateX(5px);
+        }
+        
+        .item-name {
+            font-weight: bold;
+            color: #0f0f0f;
+            font-size: 1.05rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .item-details {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .item-condition {
+            display: inline-block;
+            background-color: #00d4ff;
+            color: #0f0f0f;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        
+        .item-storage {
+            display: inline-block;
+            margin-left: 0.5rem;
+            background-color: rgba(0, 212, 255, 0.3);
+            color: #0f0f0f;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+        }
+        
+        /* --- NARRATIVE SECTION --- */
+        .narrative-panel {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+        }
+        
+        .story-beat {
+            margin-bottom: 2rem;
+        }
+        
+        .story-beat h3 {
+            color: #00d4ff;
+            text-transform: uppercase;
+            font-size: 1.15rem;
+            margin-top: 0;
+        }
+        
+        .narrative-context {
+            background-color: rgba(255, 255, 255, 0.5);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #00d4ff;
+        }
+        
+        .narrative-context p {
+            margin: 0.5rem 0;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+        
+        .mechanical-check {
+            background-color: rgba(0, 212, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border-top: 3px solid #00d4ff;
+        }
+        
+        .check-item {
+            padding: 0.5rem 0;
+            color: #333;
+        }
+        
+        .check-label {
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .choices {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1.5rem;
+            border-radius: 6px;
+        }
+        
+        .choice-button {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background-color: rgba(0, 212, 255, 0.2);
+            border: 2px solid #00d4ff;
+            border-radius: 6px;
+            color: #0f0f0f;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .choice-button:hover {
+            background-color: #00d4ff;
+            color: #0f0f0f;
+            transform: translateX(5px);
+        }
+        
+        .choice-number {
+            display: inline-block;
+            background-color: #00d4ff;
+            color: #0f0f0f;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            margin-right: 0.5rem;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        
+        .innovation-note {
+            background-color: rgba(255, 215, 0, 0.1);
+            border-left: 4px solid #ffd700;
+            padding: 1rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 1rem;
+        }
+        
+        /* --- INPUT FIELD --- */
+        .input-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .input-label {
+            display: block;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        #player-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #00d4ff;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+        
+        #player-input:focus {
+            outline: none;
+            background-color: rgba(0, 212, 255, 0.05);
+        }
+        
+        .input-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: #00d4ff;
+            color: #0f0f0f;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        
+        .input-btn:hover {
+            background-color: #00a8cc;
+            transform: scale(1.05);
+        }
+        
+        /* --- FOOTER --- */
+        footer.project-footer {
+            margin-top: 3rem;
+            padding: 2rem;
+            font-size: 0.85rem;
+            text-align: center;
+            background-color: rgba(17, 17, 17, 0.95);
+            color: #ccc;
+            border-top: 2px solid #00d4ff;
+        }
+        
+        .system-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #00d4ff;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="tsparticles"></div>
+    
+    <header class="project-header">
+        <h1>⚔️ INVENTORY & NARRATIVE HUB</h1>
+        <p>The Scout/Advisor Game Master System</p>
+    </header>
+    
+    <nav class="main-navigation">
+        <a href="index.html">← Home</a>
+        <a href="#" class="active">Inventory</a>
+        <a href="#" onclick="toggleSection('character')">Character</a>
+        <a href="#" onclick="toggleSection('story')">Story</a>
+    </nav>
+    
+    <main>
+        <div class="inventory-grid">
+            
+            <!-- CHARACTER STATUS PANEL -->
+            <div class="panel">
+                <h2>Character Status</h2>
+                
+                <div class="character-status">
+                    <h3 id="character-name">The Wanderer</h3>
+                    
+                    <div class="stat-row">
+                        <span class="stat-label">Class:</span>
+                        <span class="stat-value" id="character-class">Undefined</span>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <span class="stat-label">Health Points:</span>
+                        <span class="stat-value" id="character-hp">100 / 100</span>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <span class="stat-label">Tier:</span>
+                        <span class="stat-value" id="character-tier">Scout</span>
+                    </div>
+                </div>
+                
+                <div class="inventory-section">
+                    <h3>Resources</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Gold/Credits:</span>
+                        <span class="stat-value" id="resource-gold">100</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Mana/Energy:</span>
+                        <span class="stat-value" id="resource-mana">50</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- INVENTORY PANEL -->
+            <div class="panel">
+                <h2>Equipment & Inventory</h2>
+                
+                <div class="inventory-section">
+                    <h3>Main Hand</h3>
+                    <div class="item">
+                        <div class="item-name">Rusted Shortsword</div>
+                        <div class="item-details">A worn blade, weathered by countless journeys.</div>
+                        <span class="item-condition">Worn</span>
+                        <span class="item-storage">Equipped</span>
+                    </div>
+                </div>
+                
+                <div class="inventory-section">
+                    <h3>Armor</h3>
+                    <div class="item">
+                        <div class="item-name">Traveler's Garb</div>
+                        <div class="item-details">Practical clothing for the road ahead.</div>
+                        <span class="item-condition">Standard</span>
+                        <span class="item-storage">Worn</span>
+                    </div>
+                </div>
+                
+                <div class="inventory-section">
+                    <h3>Consumables</h3>
+                    <div class="item">
+                        <div class="item-name">Rations</div>
+                        <div class="item-details">Food provisions for 3 days of travel.</div>
+                        <span class="item-storage">x3</span>
+                    </div>
+                    <div class="item">
+                        <div class="item-name">Field Medkit</div>
+                        <div class="item-details">Basic supplies for treating minor wounds.</div>
+                        <span class="item-storage">x1</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- NARRATIVE SECTION (Full Width) -->
+            <div class="panel narrative-panel">
+                <h2>⚔️ Current Story Beat</h2>
+                
+                <div class="story-beat">
+                    <h3>Step 1: The Scene</h3>
+                    <div class="narrative-context">
+                        <p id="narrative-scene">
+                            You stand at <strong>The Threshold</strong>, a weathered archway carved into ancient stone. 
+                            Before you stretches a vast, misty canyon. The air smells of copper and distant rain. 
+                            From somewhere below echoes the sound of running water—or something far larger.
+                        </p>
+                        <p style="font-style: italic; color: #666; margin-top: 1rem;">
+                            <strong>Active Threats:</strong> <span id="active-threats">Distant howling (unidentified)</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="story-beat">
+                    <h3>Step 2: The Check</h3>
+                    <div class="mechanical-check">
+                        <div class="check-item">
+                            <span class="check-label">Your Status:</span> Healthy, Cautious, Ready for Action
+                        </div>
+                        <div class="check-item">
+                            <span class="check-label">Inventory Loaded:</span> <span id="inventory-count">7 items</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-label">System Monitor:</span> <span class="system-indicator"></span>All Systems Ready
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="story-beat">
+                    <h3>Step 3: The Choice</h3>
+                    <div class="choices">
+                        <button class="choice-button" onclick="selectChoice(1)">
+                            <span class="choice-number">1</span>
+                            Investigate the canyon carefully, listening for more clues.
+                        </button>
+                        <button class="choice-button" onclick="selectChoice(2)">
+                            <span class="choice-number">2</span>
+                            Call out into the mist to identify what lies below.
+                        </button>
+                        <button class="choice-button" onclick="selectChoice(3)">
+                            <span class="choice-number">3</span>
+                            Consult your inventory for tools or guidance before proceeding.
+                        </button>
+                    </div>
+                    
+                    <div class="innovation-note">
+                        <strong>💡 Player Innovation:</strong> You can also ignore these choices and attempt something entirely different. 
+                        The system will validate and integrate your creative solution into the narrative.
+                    </div>
+                </div>
+                
+                <div class="input-section">
+                    <label class="input-label">💬 Enter Your Action (or type INVENTORY to check items)</label>
+                    <div class="input-group">
+                        <input type="text" id="player-input" placeholder="Describe your action or choice..." />
+                        <button class="input-btn" onclick="submitAction()">Submit</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+    
+    <footer class="project-footer">
+        <p>
+            <span class="system-indicator"></span>
+            Operation Great Hall | RPG Narrative System v1.0 | 
+            <a href="https://github.com/SmokedUpRabbit/Operation-Great-Hall" style="color: #00d4ff; text-decoration: none;">GitHub</a>
+        </p>
+    </footer>
+    
+    <script>
+        // ===== PARTICLE INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            tsParticles.load({
+                id: "tsparticles",
+                options: {
+                    preset: "stars",
+                    background: { color: { value: "#0f0f0f" } },
+                    particles: {
+                        move: { speed: 0.5 },
+                        size: { value: { min: 0.5, max: 2 } }
+                    },
+                    interactivity: {
+                        events: { onHover: { enable: true, mode: "bubble" } },
+                        modes: { bubble: { distance: 250, size: 6, duration: 2, opacity: 0.8 } }
+                    }
+                }
+            });
+        });
+        
+        // ===== GAME STATE ENGINE =====
+        const gameState = {
+            player: {
+                name: "The Wanderer",
+                class: "Undefined",
+                tier: "Scout",
+                hp: 100,
+                maxHp: 100,
+                resources: { gold: 100, mana: 50 }
+            },
+            inventory: [
+                { name: "Rusted Shortsword", storage: "Equipped", condition: "Worn" },
+                { name: "Traveler's Garb", storage: "Worn", condition: "Standard" },
+                { name: "Rations", storage: "x3", condition: "Fresh" },
+                { name: "Field Medkit", storage: "x1", condition: "Standard" }
+            ],
+            currentScene: {
+                context: "You stand at The Threshold, a weathered archway carved into ancient stone.",
+                threats: "Distant howling (unidentified)"
+            }
+        };
+        
+        // ===== INVENTORY INTERRUPT HANDLER =====
+        function checkInventoryInterrupt(input) {
+            if (input.trim().toUpperCase() === "INVENTORY") {
+                displayInventory();
+                return true;
+            }
+            return false;
+        }
+        
+        function displayInventory() {
+            const inv = gameState.inventory;
+            let display = "[Your Inventory]:\n";
+            inv.forEach((item, i) => {
+                display += `${i + 1}. ${item.name} (${item.storage}, ${item.condition})\n`;
+            });
+            alert(display);
+        }
+        
+        // ===== CHOICE SYSTEM =====
+        function selectChoice(choiceNumber) {
+            const choices = {
+                1: "You descend cautiously into the canyon, testing each step...",
+                2: "Your voice echoes into the mist. A long silence follows...",
+                3: "You open your pack and examine your equipment carefully..."
+            };
+            
+            if (choices[choiceNumber]) {
+                processPlayerAction(choices[choiceNumber]);
+            }
+        }
+        
+        // ===== MAIN ACTION PROCESSOR =====
+        function submitAction() {
+            const input = document.getElementById('player-input').value.trim();
+            if (!input) return;
+            
+            // Check for inventory interrupt
+            if (checkInventoryInterrupt(input)) {
+                document.getElementById('player-input').value = '';
+                return;
+            }
+            
+            // Process regular action
+            processPlayerAction(input);
+            document.getElementById('player-input').value = '';
+        }
+        
+        function processPlayerAction(action) {
+            // This is where the narrative engine would process the action
+            // For now, we'll provide basic feedback
+            
+            const feedback = `
+                Action Registered: "${action}"
+                
+                The system processes your choice...
+                [Your action has been integrated into the ongoing narrative]
+                
+                A new scene is forming...
+            `;
+            
+            alert(feedback);
+            
+            // In a real implementation, this would call a backend narrative engine
+            // to generate the next story beat based on the player's action
+        }
+        
+        // ===== UI HELPERS =====
+        function toggleSection(section) {
+            console.log(`Toggling ${section} section`);
+        }
+        
+        // Allow Enter key to submit action
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.activeElement.id === 'player-input') {
+                submitAction();
+            }
+        });
+        
+        // Initialize player display
+        document.getElementById('character-name').textContent = gameState.player.name;
+        document.getElementById('character-class').textContent = gameState.player.class;
+        document.getElementById('character-tier').textContent = gameState.player.tier;
+        document.getElementById('character-hp').textContent = `${gameState.player.hp} / ${gameState.player.maxHp}`;
+        document.getElementById('resource-gold').textContent = gameState.player.resources.gold;
+        document.getElementById('resource-mana').textContent = gameState.player.resources.mana;
+        document.getElementById('inventory-count').textContent = gameState.inventory.length + ' items';
+    </script>
+    
+</body>
+</html>
