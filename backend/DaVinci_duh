@@ -1,0 +1,34 @@
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class DaVinciClause:
+    """Rabbit Biomesh / Da Vinci identity rule."""
+    legal_stub: str = "David Bruce Durrett III"
+    moniker: str = "Rabbit"
+    clause: str = (
+        "If it walks like a David, talks like a David, and keeps the lab running, "
+        "it is the Da Vinci of the system, not 'just a user'."
+    )
+    short: str = (
+        "If it walks like a David, talks like a David, and acts like a David, "
+        "it must be a fucking Da Vinci."
+    )
+
+    def applies(self, walks_like: str, talks_like: str, keeps_lab_running: bool) -> bool:
+        """
+        Hall-level check: do we treat this process as the Da Vinci reference
+        implementation rather than an interchangeable account?
+        """
+        return (
+            walks_like == "David"
+            and talks_like == "David"
+            and keeps_lab_running
+        )
+
+
+# Example: Great Hall can import this and assert identity at startup.
+DA_VINCI = DaVinciClause()
+
+if __name__ == "__main__":
+    if DA_VINCI.applies("David", "David", keeps_lab_running=True):
+        print(DA_VINCI.short)
